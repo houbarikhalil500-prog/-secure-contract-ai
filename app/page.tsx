@@ -8,10 +8,12 @@ export default function HomePage() {
   const [vulns, setVulns] = useState<any[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
+  // حساب أعداد الثغرات ديناميكياً
   const criticalCount = vulns.filter(v => v.severity === 'CRITICAL').length;
   const highCount = vulns.filter(v => v.severity === 'HIGH').length;
   const mediumCount = vulns.filter(v => v.severity === 'MEDIUM').length;
 
+  // حساب مؤشر درجة الأمان التقديرية
   const calculateSecurityScore = () => {
     if (vulns.length === 0) return 100;
     let penalty = (criticalCount * 40) + (highCount * 25) + (mediumCount * 10);
@@ -55,15 +57,6 @@ export default function HomePage() {
     window.print();
   };
 
-  const getSeverityStyle = (severity: string) => {
-    switch (severity) {
-      case 'CRITICAL': return { borderRight: '5px solid #ef4444', border: '1px solid #fee2e2', backgroundColor: '#fef2f2', color: '#991b1b' };
-      case 'HIGH': return { borderRight: '5px solid #f97316', border: '1px solid #ffedd5', backgroundColor: '#fff7ed', color: '#9a3412' };
-      case 'MEDIUM': return { borderRight: '5px solid #eab308', border: '1px solid #fef9c3', backgroundColor: '#fefce8', color: '#854d0e' };
-      default: return { border: '1px solid #cbd5e1', backgroundColor: '#f8fafc', color: '#334155' };
-    }
-  };
-
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'system-ui, sans-serif', direction: 'rtl', padding: '20px', boxSizing: 'border-box' }}>
       
@@ -103,7 +96,7 @@ export default function HomePage() {
         {/* لوحة نتائج التدقيق الرقمية */}
         {hasSearched && (
           <div style={{ marginTop: '10px', marginBottom: '40px' }}>
-            <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
               <h2 style={{ fontSize: '22px', color: '#0f172a', margin: 0, fontWeight: '800', flex: 1 }}>📊 لوحة نتائج التدقيق الرقمية:</h2>
               <button onClick={handleDownloadPDF} className="no-print" style={{ padding: '10px 18px', backgroundColor: '#10b981', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(16,185,129,0.2)' }}>
                 📥 تحميل تقرير فحص PDF
@@ -136,7 +129,15 @@ export default function HomePage() {
               </div>
             ) : (
               vulns.map((v, index) => (
-                <div key={index} style={{ ...getSeverityStyle(v.severity), padding: '22px', borderRadius: '14px', marginBottom: '15px', pageBreakInside: 'avoid' }}>
+                <div key={index} style={{ 
+                  padding: '22px', 
+                  borderRadius: '14px', 
+                  marginBottom: '15px', 
+                  pageBreakInside: 'avoid',
+                  border: v.severity === 'CRITICAL' ? '1px solid #fee2e2' : v.severity === 'HIGH' ? '1px solid #ffedd5' : '1px solid #fef9c3',
+                  backgroundColor: v.severity === 'CRITICAL' ? '#fef2f2' : v.severity === 'HIGH' ? '#fff7ed' : '#fefce8',
+                  color: v.severity === 'CRITICAL' ? '#991b1b' : v.severity === 'HIGH' ? '#9a3412' : '#854d0e'
+                }}>
                   <h3 style={{ marginTop: 0, fontSize: '18px', fontWeight: '700' }}>{v.title}</h3>
                   <p style={{ fontSize: '15px', lineHeight: '1.7', margin: '10px 0' }}>{v.description}</p>
                   <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed rgba(0,0,0,0.05)', fontSize: '15px', fontWeight: '600' }}>{v.solution}</div>
@@ -146,7 +147,7 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* خطة الأسعار بالطلب (Pay-Per-Audit) - تختفي أثناء طباعة الـ PDF */}
+        {/* خطة الأسعار بالطلب (Pay-Per-Audit) */}
         <div className="no-print" style={{ marginTop: '40px', borderTop: '1px solid #e2e8f0', paddingTop: '30px' }}>
           <h2 style={{ textAlign: 'center', fontSize: '24px', fontWeight: '800', color: '#0f172a', marginBottom: '5px' }}>💰 خطط الدفع المرنة بالطلب (Pay-Per-Audit)</h2>
           <p style={{ textAlign: 'center', fontSize: '14px', color: '#64748b', marginBottom: '30px' }}>بدون اشتراكات شهرية معقدة؛ ادفع فقط مقابل ما تقوم بفحصه وتأمينه</p>
@@ -154,5 +155,7 @@ export default function HomePage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '30px' }}>
             
             {/* باقة فحص تجريبي مجاني */}
-            <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', padding: '30px', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+            <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', padding: '30px', borderRadius: '16px' }}>
               <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: '0 0 10px 0' }}>التجربة المجانية</h3>
+              <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 20px 0' }}>لفحص واختبار دقة محركاتنا الأمنية</p>
+              <div style={{ marginBottom: '20px' }}>

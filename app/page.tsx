@@ -68,7 +68,6 @@ return ( <main style={{ maxWidth: '900px', margin: '0 auto', padding: '30px', di
     <h1 style={{ margin: '0 0 12px 0', fontSize: '34px', fontWeight: '800' }}>🛡️ Secure Contract AI</h1>
     <p style={{ fontSize: '16px', color: '#94a3b8', maxWidth: '600px', margin: '0 auto', lineHeight: '1.6' }}>بوابة أمان الـ Web3 الشاملة للشركات والمطورين.
 
-Alec🧧 Verona:
 فحص عميق للثغرات الأمنية والمالية المعقدة بأعلى معايير الحماية السيبرانية.</p>
   </header>
 
@@ -124,7 +123,6 @@ Alec🧧 Verona:
         <div style={{ backgroundColor: '#fff7ed', padding: '20px', borderRadius: '14px', textAlign: 'center', border: '1px solid #ffedd5' }}>
           <span style={{ fontSize: '14px', color: '#9a3412', fontWeight: '600', display: 'block', marginBottom: '8px' }}>⚠️ مشاكل عالية الخطورة</span>
 
-Alec🧧 Verona:
 <span style={{ fontSize: '32px', fontWeight: '800', color: '#f97316' }}>{highCount}</span>
         </div>
       </div>

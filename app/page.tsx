@@ -73,7 +73,7 @@ export default function HomePage() {
   return (
     <main style={{ maxWidth: '900px', margin: '0 auto', padding: '30px', direction: 'rtl', fontFamily: 'system-ui, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       
-      {/* 📊 شريط الحسابات والأرباح */}
+      {/* شريط الحسابات والأرباح المحدث */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '25px' }}>
         <div style={{ backgroundColor: '#ffffff', padding: '15px 20px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
           <span style={{ color: '#64748b', fontSize: '13px', fontWeight: '600', display: 'block' }}>💳 محاكاة رصيد العميل:</span>

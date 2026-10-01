@@ -13,6 +13,4 @@ export default function HomePage() {
     }}>
       <h1>مرحباً بك في Secure Contract AI</h1>
       <p>بدء العمل على نظام تحليل وفحص العقود الذكي.</p>
-    </div>
-  );
-}
+    </div

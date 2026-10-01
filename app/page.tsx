@@ -16,21 +16,20 @@ export default function LoginPage() {
     
     setIsLoading(true);
     
-    // 🔐 تفعيل آلية التحقق الحقيقية وربط زر الدخول بالجلسة المعتمدة للمتصفح
+    // 🔐 التوجيه الفوري والمباشر دون استخدام الـ alert المسبب للتعليق
     setTimeout(() => {
       if (email === "admin@secure.com" && password === "password123") {
-        localStorage.setItem("isLoggedIn", "true"); // تدوين نجاح الجلسة لحماية الواجهة الرئيسية ✅
-        alert("تم تسجيل الدخول بنجاح!");
-        window.location.href = "/"; // إعادة التوجيه الفوري للوحة التحكم الرئيسية
+        localStorage.setItem("isLoggedIn", "true"); // تفعيل الجلسة محلياً للمتصفح
+        window.location.replace("/"); // التوجيه الفوري الإجباري للوحة الفحص الرئيسية 🚀
       } else {
         alert("البريد الإلكتروني أو كلمة المرور غير صحيحة!");
         setIsLoading(false);
       }
-    }, 1000);
+    }, 800);
   };
 
   return (
-    <main style={{ maxWidth: '400px', margin: '100px auto', padding: '30px', direction: 'rtl', fontFamily: 'system-ui, sans-serif', border: '1px solid #ccc', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+    <main style={{ maxWidth: '400px', margin: '80px auto', padding: '30px', direction: 'rtl', fontFamily: 'system-ui, sans-serif', border: '1px solid #ccc', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '25px', color: '#333' }}>🔐 تسجيل الدخول للمنصة</h2>
       
       <form onSubmit={handleSubmit}>
@@ -57,7 +56,7 @@ export default function LoginPage() {
         </div>
 
         <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '12px', backgroundColor: '#0284c7', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>
-          {isLoading ? 'جاري التحقق وتفعيل الجلسة...' : 'تسجيل الدخول'}
+          {isLoading ? 'جاري الدخول الفوري...' : 'تسجيل الدخول'}
         </button>
       </form>
       

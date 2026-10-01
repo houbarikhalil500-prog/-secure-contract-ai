@@ -73,7 +73,7 @@ export default function HomePage() {
   return (
     <main style={{ maxWidth: '900px', margin: '0 auto', padding: '30px', direction: 'rtl', fontFamily: 'system-ui, sans-serif', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       
-      {/* 📊 شريط الحسابات والأرباح المحدث */}
+      {/* 📊 شريط الحسابات والأرباح */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '25px' }}>
         <div style={{ backgroundColor: '#ffffff', padding: '15px 20px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
           <span style={{ color: '#64748b', fontSize: '13px', fontWeight: '600', display: 'block' }}>💳 محاكاة رصيد العميل:</span>
@@ -89,7 +89,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ✅ تعديل السطر 90-93 لإنهاء مشكلة التكرار تماماً */}
       <header style={{ textAlign: 'center', padding: '50px 20px', backgroundColor: '#0f172a', color: '#ffffff', borderRadius: '20px', marginBottom: '30px' }}>
         <h1 style={{ margin: '0 0 12px 0', fontSize: '34px', fontWeight: '800' }}>🛡️ Secure Contract AI</h1>
         <p style={{ fontSize: '16px', color: '#94a3b8', maxWidth: '600px', margin: '0 auto', lineHeight: '1.6' }}>بوابة أمان الـ Web3 الشاملة للشركات والمطورين. فحص عميق للثغرات الأمنية والمالية المعقدة بأعلى معايير الحماية السيبرانية.</p>

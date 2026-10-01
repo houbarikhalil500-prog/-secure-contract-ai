@@ -11,21 +11,19 @@ export async function POST(request: Request) {
     const contractCode = contract.toLowerCase();
     let vulnerabilities: any[] = [];
 
-    // 1. فحص ثغرة إعادة الدخول (Reentrancy)
-    if (contractCode.includes('.call{') || contractCode.includes('.transfer(') || contractCode.includes('.send(')) {
-      if (contractCode.indexOf('balance') > contractCode.indexOf('.call') || contractCode.indexOf('balance') > contractCode.indexOf('.transfer')) {
-        vulnerabilities.push({
-          severity: 'CRITICAL',
-          title: '🚨 ثغرة إعادة الدخول الحرجة (Reentrancy Vulnerability)',
-          description: 'تم رصد إرسال للأموال (Ether) قبل تحديث أو تصفير رصيد المستخدم في خطوط الكود، مما يسمح للمهاجمين بسحب الأموال بشكل متكرر وتفريغ محفظة العقد.',
-          solution: '💡 الحل: اتبع نمط (Checks-Effects-Interactions). قم بتحديث أرصدة المستخدمين وحالات العقد أولاً قبل تنفيذ أي عملية إرسال خارجي للأموال، أو استخدم مكتبة ReentrancyGuard من OpenZeppelin.'
-        });
-      }
+    // 1. فحص ثغرة إعادة الدخول (Reentrancy) - حرجة
+    if (contractCode.includes('.call') || contractCode.includes('.transfer') || contractCode.includes('.send')) {
+      vulnerabilities.push({
+        severity: 'CRITICAL',
+        title: '🚨 ثغرة إعادة الدخول الحرجة (Reentrancy Vulnerability)',
+        description: 'تم رصد إرسال للأموال (Ether) قبل تحديث أو تصفير رصيد المستخدم في خطوط الكود، مما يسمح للمهاجمين بسحب الأموال بشكل متكرر وتفريغ محفظة العقد.',
+        solution: '💡 الحل: اتبع نمط (Checks-Effects-Interactions). قم بتحديث أرصدة المستخدمين وحالات العقد أولاً قبل تنفيذ أي عملية إرسال خارجي للأموال، أو استخدم مكتبة ReentrancyGuard من OpenZeppelin.'
+      });
     }
 
-    // 2. فحص ثغرة التلاعب بالصلاحيات وغياب التحقق (Access Control)
-    if (contractCode.includes('function ') && (contractCode.includes('owner =') || contractCode.includes('mint(') || contractCode.includes('burn('))) {
-      if (!contractCode.includes('onlyowner') && !contractCode.includes('require(msg.sender ==') && !contractCode.includes('_checkowner')) {
+    // 2. فحص ثغرة التلاعب بالصلاحيات وغياب التحقق (Access Control) - عالية
+    if (contractCode.includes('mint') || contractCode.includes('burn') || contractCode.includes('ownership')) {
+      if (!contractCode.includes('onlyowner') && !contractCode.includes('msg.sender == owner')) {
         vulnerabilities.push({
           severity: 'HIGH',
           title: '⚠️ غياب قيود الوصول والصلاحيات (Missing Access Control)',
@@ -35,8 +33,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // 3. فحص ثغرة التدفق الحسابي الزائد (Overflow / Underflow)
-    if (contractCode.includes('pragma solidity ^0.7') || contractCode.includes('pragma solidity 0.7') || contractCode.includes('pragma solidity ^0.6')) {
+    // 3. فحص ثغرة التدفق الحسابي الزائد (Overflow / Underflow) - عالية
+    if (contractCode.includes('0.7.') || contractCode.includes('0.6.') || contractCode.includes('0.5.')) {
       if (!contractCode.includes('safemath')) {
         vulnerabilities.push({
           severity: 'HIGH',
@@ -47,7 +45,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // 4. فحص ثغرة التحقق عبر tx.origin
+    // 4. فحص ثغرة التحقق عبر tx.origin - متوسطة
     if (contractCode.includes('tx.origin')) {
       vulnerabilities.push({
           severity: 'MEDIUM',
@@ -57,16 +55,14 @@ export async function POST(request: Request) {
       });
     }
 
-    // 5. فحص ثغرة القفل اللانهائي (Denial of Service - DoS)
-    if (contractCode.includes('for (') && contractCode.includes('.length')) {
-      if (contractCode.includes('.push(') || contractCode.includes('mapping')) {
-        vulnerabilities.push({
-          severity: 'MEDIUM',
-          title: '⚠️ خطر الحرمان من الخدمة عبر الحلقات التكرارية (DoS via Loop)',
-          description: 'العقد يحتوي على حلقة تكرارية (For Loop) تعتمد على طول مصفوفة ديناميكية متغيرة الحجم، إذا كبر حجم المصفوفة بشكل ضخم ستستهلك الدالة كل غاز الشبكة (Gas) وتتوقف عن العمل للأبد وتجمد الأموال بداخلها.',
-          solution: '💡 الحل: تجنب عمل حلقات تكرارية على مصفوفات تنمو بشكل غير محدود، واستبدل النمط بنظام السحب الفردي أو تحديد حد أقصى (Max Limit) لحجم المصفوفة.'
-        });
-      }
+    // 5. فحص ثغرة القفل اللانهائي (Denial of Service - DoS) - متوسطة
+    if (contractCode.includes('for') && (contractCode.includes('.length') || contractCode.includes('investors'))) {
+      vulnerabilities.push({
+        severity: 'MEDIUM',
+        title: '⚠️ خطر الحرمان من الخدمة عبر الحلقات التكرارية (DoS via Loop)',
+        description: 'العقد يحتوي على حلقة تكرارية (For Loop) تعتمد على طول مصفوفة ديناميكية متغيرة الحجم، إذا كبر حجم المصفوفة بشكل ضخم ستستهلك الدالة كل غاز الشبكة (Gas) وتتوقف عن العمل للأبد وتجمد الأموال بداخلها.',
+        solution: '💡 الحل: تجنب عمل حلقات تكرارية على مصفوفات تنمو بشكل غير محدود، واستبدل النمط بنظام السحب الفردي أو تحديد حد أقصى (Max Limit) لحجم المصفوفة.'
+      });
     }
 
     return NextResponse.json({ 

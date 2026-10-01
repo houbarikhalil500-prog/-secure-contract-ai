@@ -8,12 +8,10 @@ export default function HomePage() {
   const [vulns, setVulns] = useState<any[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
-  // حساب أعداد الثغرات ديناميكياً
   const criticalCount = vulns.filter(v => v.severity === 'CRITICAL').length;
   const highCount = vulns.filter(v => v.severity === 'HIGH').length;
   const mediumCount = vulns.filter(v => v.severity === 'MEDIUM').length;
 
-  // حساب مؤشر درجة الأمان التقديرية
   const calculateSecurityScore = () => {
     if (vulns.length === 0) return 100;
     let penalty = (criticalCount * 40) + (highCount * 25) + (mediumCount * 10);
@@ -79,7 +77,7 @@ export default function HomePage() {
 
       <header style={{ textAlign: 'center', padding: '40px 10px', backgroundColor: '#0f172a', color: '#ffffff', borderRadius: '16px', marginBottom: '25px', boxShadow: '0 4px 15px rgba(15,23,42,0.1)' }}>
         <h1 style={{ margin: '0 0 10px 0', fontSize: '30px', fontWeight: '800', letterSpacing: '0.5px' }}>🛡️ Secure Contract AI</h1>
-        <p style={{ margin: 0, fontSize: '15px', color: '#94a3b8', fontWeight: '500' }}>منصة التدقيق الأمني المتقدمة رقم #1 لتأمين وفحص العقود الذكية</p>
+        <p style={{ margin: 0, fontSize: '15px', color: '#94a3b8', fontWeight: '500' }}>منصة التدقيق الأمني المتقدمة رقم #1 لتأمين وفحص العقود الذكية بالطلب</p>
       </header>
 
       <main className="print-full-width" style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -148,13 +146,13 @@ export default function HomePage() {
           </div>
         )}
 
-        {/* خطة الأسعار والخطط المتقدمة - تختفي تماماً أثناء طباعة الـ PDF */}
+        {/* خطة الأسعار بالطلب (Pay-Per-Audit) - تختفي أثناء طباعة الـ PDF */}
         <div className="no-print" style={{ marginTop: '40px', borderTop: '1px solid #e2e8f0', paddingTop: '30px' }}>
-          <h2 style={{ textAlign: 'center', fontSize: '24px', fontWeight: '800', color: '#0f172a', marginBottom: '5px' }}>💰 خطط الأسعار والاشتراكات المتاحة</h2>
-          <p style={{ textAlign: 'center', fontSize: '14px', color: '#64748b', marginBottom: '30px' }}>اختر الخطة المناسبة لاحتياجات مشروعك البرمجي واحمِ أموال مستثمريك</p>
+          <h2 style={{ textAlign: 'center', fontSize: '24px', fontWeight: '800', color: '#0f172a', marginBottom: '5px' }}>💰 خطط الدفع المرنة بالطلب (Pay-Per-Audit)</h2>
+          <p style={{ textAlign: 'center', fontSize: '14px', color: '#64748b', marginBottom: '30px' }}>بدون اشتراكات شهرية معقدة؛ ادفع فقط مقابل ما تقوم بفحصه وتأمينه</p>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '30px' }}>
             
-            {/* باقة مجانية */}
+            {/* باقة فحص تجريبي مجاني */}
             <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', padding: '30px', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
-              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: '0 0 10px 0' }}>الخطة الأساسية</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: '0 0 10px 0' }}>التجربة المجانية</h3>

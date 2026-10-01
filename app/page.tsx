@@ -53,7 +53,6 @@ export default function HomePage() {
     }
   };
 
-  // وظيفة طباعة وحفظ التقرير كملف PDF احترافي واختفاء أزرار التحكم أثناء الطباعة
   const handleDownloadPDF = () => {
     window.print();
   };
@@ -70,7 +69,6 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'system-ui, sans-serif', direction: 'rtl', padding: '20px', boxSizing: 'border-box' }}>
       
-      {/* ستايل مخصص لإخفاء نموذج الإدخال والأزرار أثناء تصدير ملف الـ PDF ليكون نظيفاً ومثالياً */}
       <style>{`
         @media print {
           body { background-color: #ffffff; padding: 0; }
@@ -86,7 +84,7 @@ export default function HomePage() {
 
       <main className="print-full-width" style={{ maxWidth: '800px', margin: '0 auto' }}>
         
-        {/* منطقة إدخال الكود - تختفي تلقائياً عند حفظ الـ PDF لجمالية التقرير المطبوع */}
+        {/* منطقة إدخال الكود */}
         <div className="no-print" style={{ backgroundColor: '#ffffff', padding: '25px', borderRadius: '16px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0', marginBottom: '25px' }}>
           <label style={{ display: 'block', marginBottom: '12px', fontWeight: '700', color: '#1e293b', fontSize: '16px' }}>أدخل كود العقد الذكي المراد تحليله قسرياً:</label>
           <textarea
@@ -106,21 +104,14 @@ export default function HomePage() {
 
         {/* لوحة نتائج التدقيق الرقمية */}
         {hasSearched && (
-          <div style={{ marginTop: '10px' }}>
+          <div style={{ marginTop: '10px', marginBottom: '40px' }}>
             <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
               <h2 style={{ fontSize: '22px', color: '#0f172a', margin: 0, fontWeight: '800', flex: 1 }}>📊 لوحة نتائج التدقيق الرقمية:</h2>
-              
-              {/* زر تحميل تقرير PDF مخصص واحترافي */}
-              <button 
-                onClick={handleDownloadPDF}
-                className="no-print"
-                style={{ padding: '10px 18px', backgroundColor: '#10b981', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(16,185,129,0.2)' }}
-              >
+              <button onClick={handleDownloadPDF} className="no-print" style={{ padding: '10px 18px', backgroundColor: '#10b981', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(16,185,129,0.2)' }}>
                 📥 تحميل تقرير فحص PDF
               </button>
             </div>
             
-            {/* شبكة العدادات ومؤشر الأمان */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px', marginBottom: '25px' }}>
               <div style={{ backgroundColor: '#ffffff', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #e2e8f0' }}>
                 <span style={{ fontSize: '13px', color: '#64748b', fontWeight: '600', display: 'block' }}>🛡️ معدل أمان العقد</span>
@@ -156,7 +147,14 @@ export default function HomePage() {
             )}
           </div>
         )}
-      </main>
-    </div>
-  );
-}
+
+        {/* خطة الأسعار والخطط المتقدمة - تختفي تماماً أثناء طباعة الـ PDF */}
+        <div className="no-print" style={{ marginTop: '40px', borderTop: '1px solid #e2e8f0', paddingTop: '30px' }}>
+          <h2 style={{ textAlign: 'center', fontSize: '24px', fontWeight: '800', color: '#0f172a', marginBottom: '5px' }}>💰 خطط الأسعار والاشتراكات المتاحة</h2>
+          <p style={{ textAlign: 'center', fontSize: '14px', color: '#64748b', marginBottom: '30px' }}>اختر الخطة المناسبة لاحتياجات مشروعك البرمجي واحمِ أموال مستثمريك</p>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+            
+            {/* باقة مجانية */}
+            <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', padding: '30px', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: '0 0 10px 0' }}>الخطة الأساسية</h3>

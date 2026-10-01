@@ -8,12 +8,10 @@ export default function HomePage() {
   const [vulns, setVulns] = useState<any[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
-  // حساب أعداد الثغرات ديناميكياً
   const criticalCount = vulns.filter(v => v.severity === 'CRITICAL').length;
   const highCount = vulns.filter(v => v.severity === 'HIGH').length;
   const mediumCount = vulns.filter(v => v.severity === 'MEDIUM').length;
 
-  // حساب مؤشر درجة الأمان التقديرية
   const calculateSecurityScore = () => {
     if (vulns.length === 0) return 100;
     let penalty = (criticalCount * 40) + (highCount * 25) + (mediumCount * 10);
@@ -57,38 +55,18 @@ export default function HomePage() {
     window.print();
   };
 
-  // دالة تحديد ستايل بطاقة الثغرة بناء على الخطورة لمنع تداخل الأقواس في الـ HTML
-  const getSeverityBoxStyle = (severity: string) => {
-    const baseStyle = { padding: '22px', borderRadius: '14px', marginBottom: '15px' };
-    if (severity === 'CRITICAL') {
-      return { ...baseStyle, border: '1px solid #fee2e2', backgroundColor: '#fef2f2', color: '#991b1b' };
-    } else if (severity === 'HIGH') {
-      return { ...baseStyle, border: '1px solid #ffedd5', backgroundColor: '#fff7ed', color: '#9a3412' };
-    } else {
-      return { ...baseStyle, border: '1px solid #fef9c3', backgroundColor: '#fefce8', color: '#854d0e' };
-    }
-  };
-
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'system-ui, sans-serif', direction: 'rtl', padding: '20px', boxSizing: 'border-box' }}>
       
-      <style dangerouslySetInnerHTML={{__html: `
-        @media print {
-          body { background-color: #ffffff; padding: 0; }
-          .no-print { display: none !important; }
-          .print-full-width { width: 100% !important; max-width: 100% !important; }
-        }
-      `}} />
-
-      <header style={{ textAlign: 'center', padding: '40px 10px', backgroundColor: '#0f172a', color: '#ffffff', borderRadius: '16px', marginBottom: '25px', boxShadow: '0 4px 15px rgba(15,23,42,0.1)' }}>
-        <h1 style={{ margin: '0 0 10px 0', fontSize: '30px', fontWeight: '800', letterSpacing: '0.5px' }}>🛡️ Secure Contract AI</h1>
-        <p style={{ margin: 0, fontSize: '15px', color: '#94a3b8', fontWeight: '500' }}>منصة التدقيق الأمني المتقدمة رقم #1 لتأمين وفحص العقود الذكية بالطلب</p>
+      <header style={{ textAlign: 'center', padding: '40px 10px', backgroundColor: '#0f172a', color: '#ffffff', borderRadius: '16px', marginBottom: '25px' }}>
+        <h1 style={{ margin: '0 0 10px 0', fontSize: '30px', fontWeight: '800' }}>🛡️ Secure Contract AI</h1>
+        <p style={{ margin: 0, fontSize: '15px', color: '#94a3b8' }}>منصة التدقيق الأمني المتقدمة رقم #1 لتأمين وفحص العقود الذكية بالطلب</p>
       </header>
 
-      <main className="print-full-width" style={{ maxWidth: '800px', margin: '0 auto' }}>
+      <main style={{ maxWidth: '800px', margin: '0 auto' }}>
         
         {/* منطقة إدخال الكود */}
-        <div className="no-print" style={{ backgroundColor: '#ffffff', padding: '25px', borderRadius: '16px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0', marginBottom: '25px' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '25px', borderRadius: '16px', border: '1px solid #e2e8f0', marginBottom: '25px' }}>
           <label style={{ display: 'block', marginBottom: '12px', fontWeight: '700', color: '#1e293b', fontSize: '16px' }}>أدخل كود العقد الذكي المراد تحليله قسرياً:</label>
           <textarea
             value={contractText}
@@ -98,7 +76,7 @@ export default function HomePage() {
           />
 
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button onClick={handleAudit} disabled={isLoading} style={{ flex: 1, padding: '14px', backgroundColor: isLoading ? '#94a3b8' : '#2563eb', color: '#ffffff', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '700', cursor: isLoading ? 'not-allowed' : 'pointer', boxShadow: '0 4px 6px -1px rgba(37,99,235,0.2)' }}>
+            <button onClick={handleAudit} disabled={isLoading} style={{ flex: 1, padding: '14px', backgroundColor: isLoading ? '#94a3b8' : '#2563eb', color: '#ffffff', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '700', cursor: isLoading ? 'not-allowed' : 'pointer' }}>
               {isLoading ? '⏳ جاري تشغيل المحركات والمحاكاة...' : '🔍 ابدأ التدقيق الأمني الفوري'}
             </button>
             <button onClick={() => { setContractText(''); setVulns([]); setHasSearched(false); }} style={{ padding: '14px 25px', backgroundColor: '#ef4444', color: '#ffffff', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '700', cursor: 'pointer' }}>🗑️ مسح</button>
@@ -110,7 +88,7 @@ export default function HomePage() {
           <div style={{ marginTop: '10px', marginBottom: '40px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
               <h2 style={{ fontSize: '22px', color: '#0f172a', margin: 0, fontWeight: '800', flex: 1 }}>📊 لوحة نتائج التدقيق الرقمية:</h2>
-              <button onClick={handleDownloadPDF} className="no-print" style={{ padding: '10px 18px', backgroundColor: '#10b981', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(16,185,129,0.2)' }}>
+              <button onClick={handleDownloadPDF} style={{ padding: '10px 18px', backgroundColor: '#10b981', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '700', cursor: 'pointer' }}>
                 📥 تحميل تقرير فحص PDF
               </button>
             </div>
@@ -141,7 +119,14 @@ export default function HomePage() {
               </div>
             ) : (
               vulns.map((v, index) => (
-                <div key={index} style={getSeverityBoxStyle(v.severity)}>
+                <div key={index} style={{ 
+                  padding: '22px', 
+                  borderRadius: '14px', 
+                  marginBottom: '15px',
+                  border: v.severity === 'CRITICAL' ? '1px solid #fee2e2' : v.severity === 'HIGH' ? '1px solid #ffedd5' : '1px solid #fef9c3',
+                  backgroundColor: v.severity === 'CRITICAL' ? '#fef2f2' : v.severity === 'HIGH' ? '#fff7ed' : '#fefce8',
+                  color: v.severity === 'CRITICAL' ? '#991b1b' : v.severity === 'HIGH' ? '#9a3412' : '#854d0e'
+                }}>
                   <h3 style={{ marginTop: 0, fontSize: '18px', fontWeight: '700' }}>{v.title}</h3>
                   <p style={{ fontSize: '15px', lineHeight: '1.7', margin: '10px 0' }}>{v.description}</p>
                   <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed rgba(0,0,0,0.05)', fontSize: '15px', fontWeight: '600' }}>{v.solution}</div>
@@ -152,12 +137,23 @@ export default function HomePage() {
         )}
 
         {/* خطة الأسعار بالطلب (Pay-Per-Audit) */}
-        <div className="no-print" style={{ marginTop: '40px', borderTop: '1px solid #e2e8f0', paddingTop: '30px' }}>
+        <div style={{ marginTop: '40px', borderTop: '1px solid #e2e8f0', paddingTop: '30px' }}>
           <h2 style={{ textAlign: 'center', fontSize: '24px', fontWeight: '800', color: '#0f172a', marginBottom: '5px' }}>💰 خطط الدفع المرنة بالطلب (Pay-Per-Audit)</h2>
           <p style={{ textAlign: 'center', fontSize: '14px', color: '#64748b', marginBottom: '30px' }}>بدون اشتراكات شهرية معقدة؛ ادفع فقط مقابل ما تقوم بفحصه وتأمينه</p>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '30px' }}>
             
-            {/* باقة فحص تجريبي مجاني */}
             <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', padding: '30px', borderRadius: '16px' }}>
               <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: '0 0 10px 0' }}>التجربة المجانية</h3>
+              <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 20px 0' }}>لفحص واختبار دقة محركاتنا الأمنية</p>
+              <div style={{ marginBottom: '20px' }}>
+                <span style={{ fontSize: '36px', fontWeight: '800', color: '#0f172a' }}>0$</span>
+                <span style={{ fontSize: '14px', color: '#64748b' }}> / فحص محدود</span>
+              </div>
+              <ul style={{ paddingRight: '20px', margin: '0 0 30px 0', fontSize: '14px', color: '#475569', lineHeight: '2' }}>
+                <li>✓ كشف الثغرات من المستوى المتوسط</li>
+                <li>✓ محاكي أسطر الكود البرمجي المبدئي</li>
+                <li>✓ لوحة إحصاءات رقمية أساسية</li>
+                <li style={{ color: '#94a3b8', textDecoration: 'line-through' }}>✗ كشف الثغرات الحرجة والعالية (السرقات)</li>
+                <li style={{ color: '#94a3b8', textDecoration: 'line-through' }}>✗ تحميل تقارير الفحص بصيغة PDF</li>
+              </ul>

@@ -16,20 +16,18 @@ export default function LoginPage() {
     
     setIsLoading(true);
     
-    // 🔐 جلب البيانات المسجلة ديناميكياً من حساب العميل الفعلي
     setTimeout(() => {
       const registeredEmail = localStorage.getItem("registeredEmail");
       const registeredPassword = localStorage.getItem("registeredPassword");
       const registeredName = localStorage.getItem("registeredName") || "العميل الكريم";
 
-      // التحقق: إما الحساب الافتراضي للأدمن أو الحساب الجديد الذي سجله المستخدم بنفسه
       if (
         (email === "admin@secure.com" && password === "password123") ||
         (email === registeredEmail && password === registeredPassword)
       ) {
-        localStorage.setItem("isLoggedIn", "true"); // تفعيل الجلسة للمتصفح
+        localStorage.setItem("isLoggedIn", "true"); 
         alert(`تم تسجيل الدخول بنجاح! مرحباً بك يا ${registeredName}`);
-        window.location.replace("/"); // التوجيه الفوري للوحة الفحص الرئيسية
+        window.location.replace("/"); 
       } else {
         alert("البريد الإلكتروني أو كلمة المرور غير صحيحة!");
         setIsLoading(false);
@@ -69,9 +67,15 @@ export default function LoginPage() {
         </button>
       </form>
       
+      {/* 🚀 تم تصحيح زر الانتقال هنا ليعمل بنظام التحويل البرمجي الصريح لمنع الـ 404 */}
       <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px' }}>
         <span>ليس لديك حساب؟ </span>
-        <a href="/register" style={{ color: '#34d399', fontWeight: 'bold', textDecoration: 'none' }}>أنشئ حسابك الجديد من هنا</a>
+        <button 
+          onClick={() => window.location.href = '/register'} 
+          style={{ background: 'none', border: 'none', color: '#34d399', fontWeight: 'bold', cursor: 'pointer', padding: 0, font: 'inherit', textDecoration: 'underline' }}
+        >
+          أنشئ حسابك الجديد من هنا
+        </button>
       </div>
     </main>
   );

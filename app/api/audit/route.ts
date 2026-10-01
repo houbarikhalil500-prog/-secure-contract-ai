@@ -8,44 +8,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "نص العقد مفقود." }, { status: 400 });
     }
 
-    const apiKey = process.env.OPENAI_API_KEY;
+    // سنقرأ المفتاح الجديد الذي سنضعه في فيرسيل باسم GEMINI_API_KEY
+    const apiKey = process.env.GEMINI_API_KEY;
     
     if (!apiKey) {
       return NextResponse.json({ 
         success: false, 
-        error: "مفتاح OPENAI_API_KEY غير معرف في إعدادات البيئة." 
+        error: "مفتاح GEMINI_API_KEY غير معرف." 
       }, { status: 500 });
     }
 
-    const response = await fetch('https://openai.com', {
+    // الاتصال بخوادم جوجل جيميني المجانية والسريعة
+    const response = await fetch(`https://googleapis.com{apiKey}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'أنت خبير أمني محترف في فحص العقود الذكية وتحليل الثغرات البرمجية. قم بتحليل العقد المرسل باللغة العربية، واستخرج نقاط الضعف أو الثغرات الأمنية وقدم نصائح لإصلاحها بشكل نقاط واضحة ومختصرة.'
-          },
-          {
-            role: 'user',
-            content: contract
-          }
-        ],
-        temperature: 0.7
+        contents: [{
+          parts: [{
+            text: `أنت خبير أمني محترف في فحص العقود الذكية وتحليل الثغرات البرمجية. قم بتحليل العقد المرسل باللغة العربية، واستخرج نقاط الضعف أو الثغرات الأمنية وقدم نصائح لإصلاحها بشكل نقاط واضحة ومختصرة:\n\n${contract}`
+          }]
+        }]
       })
     });
 
     const data = await response.json();
-    
-    if (data.error) {
-      return NextResponse.json({ success: false, error: data.error.message }, { status: 500 });
-    }
-
-    const aiText = data.choices?.[0]?.message?.content || "لم يتمكن الذكاء الاصطناعي من تحليل العقد، يرجى المحاولة لاحقاً.";
+    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "لم يتمكن الذكاء الاصطناعي من تحليل العقد.";
 
     return NextResponse.json({ 
       success: true, 
@@ -53,6 +40,6 @@ export async function POST(request: Request) {
     });
 
   } catch (error) {
-    return NextResponse.json({ success: false, error: "حدث خطأ أثناء الاتصال بنظام الذكاء الاصطناعي." }, { status: 500 });
+    return NextResponse.json({ success: false, error: "حدث خطأ في معالجة الطلب." }, { status: 500 });
   }
 }

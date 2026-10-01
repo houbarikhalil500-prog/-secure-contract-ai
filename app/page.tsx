@@ -74,10 +74,30 @@ export default function HomePage() {
     }
   };
 
-  // دالة شحن فوري مباشرة بقيمة 50 دولار عبر زر ثابت مريح
-  const handleQuickCryptoDeposit = () => {
-    setUserBalance(prev => prev + 50.00);
-    alert("🎉 تم محاكاة رصد البلوكشين بنجاح عبر NOWPayments!\nتم إيداع \$50.00 في محفظتك الرقمية.");
+  // ✅ دالة الشحن الحقيقية عبر الاتصال ببوابة العملات الرقمية المعتمدة
+  const handleQuickCryptoDeposit = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/pay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: 50.00 }) // توليد فاتورة دفع حقيقية بقيمة 50 دولار
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // عرض عنوان محفظة الاستقبال الحقيقي المولد للعميل من البلوكشين لإرسال الأموال
+        alert(`🪙 تم إنشاء فاتورة دفع مشفرة حقيقية بنجاح!\n\nالرجاء إرسال كمية الـ USDT المطلوبة لعنوان الاستقبال التالي:\n📍 العنوان: ${data.pay_address}\n💰 المبلغ المطلوب بدقة: ${data.pay_amount} USDT\n\nسيتم تحديث رصيدك تلقائياً بمجرد تأكيد البلوكشين للمعاملة.`);
+      } else {
+        alert(data.error || "حدث خطأ غير متوقع أثناء معالجة الفاتورة");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("فشل الاتصال بخوادم بوابة الدفع المشفرة حالياً");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDownloadPDF = () => {
@@ -101,9 +121,9 @@ export default function HomePage() {
         </div>
         
         <div style={{ display: 'flex', gap: '10px' }}>
-          {/* زر شحن سريع مباشر ومستقر تماماً في التصميم */}
-          <button onClick={handleQuickCryptoDeposit} style={{ padding: '8px 16px', backgroundColor: '#f59e0b', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px' }}>
-            🪙 شحن رصيد الكريبتو (+\$50)
+          {/* زر تفعيل الشحن الحقيقي بالعملات الرقمية */}
+          <button onClick={handleQuickCryptoDeposit} disabled={isLoading} style={{ padding: '8px 16px', backgroundColor: '#f59e0b', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '13px' }}>
+            {isLoading ? '⚙️ جاري توليد المحفظة...' : '🪙 شحن رصيد الكريبتو (+\$50)'}
           </button>
           <button onClick={handleLogout} style={{ padding: '8px 16px', backgroundColor: '#ef4444', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}>🚪 خروج</button>
         </div>

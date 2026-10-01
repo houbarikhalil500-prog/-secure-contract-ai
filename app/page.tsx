@@ -57,16 +57,28 @@ export default function HomePage() {
     window.print();
   };
 
+  // دالة تحديد ستايل بطاقة الثغرة بناء على الخطورة لمنع تداخل الأقواس في الـ HTML
+  const getSeverityBoxStyle = (severity: string) => {
+    const baseStyle = { padding: '22px', borderRadius: '14px', marginBottom: '15px' };
+    if (severity === 'CRITICAL') {
+      return { ...baseStyle, border: '1px solid #fee2e2', backgroundColor: '#fef2f2', color: '#991b1b' };
+    } else if (severity === 'HIGH') {
+      return { ...baseStyle, border: '1px solid #ffedd5', backgroundColor: '#fff7ed', color: '#9a3412' };
+    } else {
+      return { ...baseStyle, border: '1px solid #fef9c3', backgroundColor: '#fefce8', color: '#854d0e' };
+    }
+  };
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'system-ui, sans-serif', direction: 'rtl', padding: '20px', boxSizing: 'border-box' }}>
       
-      <style>{`
+      <style dangerouslySetInnerHTML={{__html: `
         @media print {
           body { background-color: #ffffff; padding: 0; }
           .no-print { display: none !important; }
           .print-full-width { width: 100% !important; max-width: 100% !important; }
         }
-      `}</style>
+      `}} />
 
       <header style={{ textAlign: 'center', padding: '40px 10px', backgroundColor: '#0f172a', color: '#ffffff', borderRadius: '16px', marginBottom: '25px', boxShadow: '0 4px 15px rgba(15,23,42,0.1)' }}>
         <h1 style={{ margin: '0 0 10px 0', fontSize: '30px', fontWeight: '800', letterSpacing: '0.5px' }}>🛡️ Secure Contract AI</h1>
@@ -129,15 +141,7 @@ export default function HomePage() {
               </div>
             ) : (
               vulns.map((v, index) => (
-                <div key={index} style={{ 
-                  padding: '22px', 
-                  borderRadius: '14px', 
-                  marginBottom: '15px', 
-                  pageBreakInside: 'avoid',
-                  border: v.severity === 'CRITICAL' ? '1px solid #fee2e2' : v.severity === 'HIGH' ? '1px solid #ffedd5' : '1px solid #fef9c3',
-                  backgroundColor: v.severity === 'CRITICAL' ? '#fef2f2' : v.severity === 'HIGH' ? '#fff7ed' : '#fefce8',
-                  color: v.severity === 'CRITICAL' ? '#991b1b' : v.severity === 'HIGH' ? '#9a3412' : '#854d0e'
-                }}>
+                <div key={index} style={getSeverityBoxStyle(v.severity)}>
                   <h3 style={{ marginTop: 0, fontSize: '18px', fontWeight: '700' }}>{v.title}</h3>
                   <p style={{ fontSize: '15px', lineHeight: '1.7', margin: '10px 0' }}>{v.description}</p>
                   <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed rgba(0,0,0,0.05)', fontSize: '15px', fontWeight: '600' }}>{v.solution}</div>
@@ -157,5 +161,3 @@ export default function HomePage() {
             {/* باقة فحص تجريبي مجاني */}
             <div style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', padding: '30px', borderRadius: '16px' }}>
               <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#1e293b', margin: '0 0 10px 0' }}>التجربة المجانية</h3>
-              <p style={{ fontSize: '13px', color: '#64748b', margin: '0 0 20px 0' }}>لفحص واختبار دقة محركاتنا الأمنية</p>
-              <div style={{ marginBottom: '20px' }}>

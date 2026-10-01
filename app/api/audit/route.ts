@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     if (contractCode.includes('for') && (contractCode.includes('.length') || contractCode.includes('investors'))) {
       vulnerabilities.push({
         severity: 'MEDIUM',
-        title: '⚠️ خطر الحرمان من الخدمة عبر الحلقات التكرارية (DoS via Loop)',
+        title: '⚠️ خطر الحرمان من الخدمة عبر الحلقات Tكرارية (DoS via Loop)',
         description: 'العقد يحتوي على حلقة تكرارية (For Loop) تعتمد على طول مصفوفة ديناميكية متغيرة الحجم، إذا كبر حجم المصفوفة بشكل ضخم ستستهلك الدالة كل غاز الشبكة (Gas) وتتوقف عن العمل للأبد وتجمد الأموال بداخلها.',
         solution: '💡 الحل: تجنب عمل حلقات تكرارية على مصفوفات تنمو بشكل غير محدود، واستبدل النمط بنظام السحب الفردي أو تحديد حد أقصى (Max Limit) لحجم المصفوفة.'
       });

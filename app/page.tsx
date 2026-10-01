@@ -16,11 +16,20 @@ export default function LoginPage() {
     
     setIsLoading(true);
     
-    // 🔐 التوجيه الفوري والمباشر دون استخدام الـ alert المسبب للتعليق
+    // 🔐 جلب البيانات المسجلة ديناميكياً من حساب العميل الفعلي
     setTimeout(() => {
-      if (email === "admin@secure.com" && password === "password123") {
-        localStorage.setItem("isLoggedIn", "true"); // تفعيل الجلسة محلياً للمتصفح
-        window.location.replace("/"); // التوجيه الفوري الإجباري للوحة الفحص الرئيسية 🚀
+      const registeredEmail = localStorage.getItem("registeredEmail");
+      const registeredPassword = localStorage.getItem("registeredPassword");
+      const registeredName = localStorage.getItem("registeredName") || "العميل الكريم";
+
+      // التحقق: إما الحساب الافتراضي للأدمن أو الحساب الجديد الذي سجله المستخدم بنفسه
+      if (
+        (email === "admin@secure.com" && password === "password123") ||
+        (email === registeredEmail && password === registeredPassword)
+      ) {
+        localStorage.setItem("isLoggedIn", "true"); // تفعيل الجلسة للمتصفح
+        alert(`تم تسجيل الدخول بنجاح! مرحباً بك يا ${registeredName}`);
+        window.location.replace("/"); // التوجيه الفوري للوحة الفحص الرئيسية
       } else {
         alert("البريد الإلكتروني أو كلمة المرور غير صحيحة!");
         setIsLoading(false);
@@ -60,11 +69,10 @@ export default function LoginPage() {
         </button>
       </form>
       
-      <p style={{ textAlign: 'center', fontSize: '13px', color: '#666', marginTop: '15px' }}>
-        الحساب الافتراضي للتجربة:<br/>
-        Email: <code style={{ backgroundColor: '#eee', padding: '2px 4px' }}>admin@secure.com</code><br/>
-        Password: <code style={{ backgroundColor: '#eee', padding: '2px 4px' }}>password123</code>
-      </p>
+      <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px' }}>
+        <span>ليس لديك حساب؟ </span>
+        <a href="/register" style={{ color: '#34d399', fontWeight: 'bold', textDecoration: 'none' }}>أنشئ حسابك الجديد من هنا</a>
+      </div>
     </main>
   );
 }

@@ -53,6 +53,11 @@ export default function HomePage() {
     }
   };
 
+  // وظيفة طباعة وحفظ التقرير كملف PDF احترافي واختفاء أزرار التحكم أثناء الطباعة
+  const handleDownloadPDF = () => {
+    window.print();
+  };
+
   const getSeverityStyle = (severity: string) => {
     switch (severity) {
       case 'CRITICAL': return { borderRight: '5px solid #ef4444', border: '1px solid #fee2e2', backgroundColor: '#fef2f2', color: '#991b1b' };
@@ -64,13 +69,25 @@ export default function HomePage() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'system-ui, sans-serif', direction: 'rtl', padding: '20px', boxSizing: 'border-box' }}>
+      
+      {/* ستايل مخصص لإخفاء نموذج الإدخال والأزرار أثناء تصدير ملف الـ PDF ليكون نظيفاً ومثالياً */}
+      <style>{`
+        @media print {
+          body { background-color: #ffffff; padding: 0; }
+          .no-print { display: none !important; }
+          .print-full-width { width: 100% !important; max-width: 100% !important; }
+        }
+      `}</style>
+
       <header style={{ textAlign: 'center', padding: '40px 10px', backgroundColor: '#0f172a', color: '#ffffff', borderRadius: '16px', marginBottom: '25px', boxShadow: '0 4px 15px rgba(15,23,42,0.1)' }}>
         <h1 style={{ margin: '0 0 10px 0', fontSize: '30px', fontWeight: '800', letterSpacing: '0.5px' }}>🛡️ Secure Contract AI</h1>
         <p style={{ margin: 0, fontSize: '15px', color: '#94a3b8', fontWeight: '500' }}>منصة التدقيق الأمني المتقدمة رقم #1 لتأمين وفحص العقود الذكية</p>
       </header>
 
-      <main style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <div style={{ backgroundColor: '#ffffff', padding: '25px', borderRadius: '16px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
+      <main className="print-full-width" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        
+        {/* منطقة إدخال الكود - تختفي تلقائياً عند حفظ الـ PDF لجمالية التقرير المطبوع */}
+        <div className="no-print" style={{ backgroundColor: '#ffffff', padding: '25px', borderRadius: '16px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0', marginBottom: '25px' }}>
           <label style={{ display: 'block', marginBottom: '12px', fontWeight: '700', color: '#1e293b', fontSize: '16px' }}>أدخل كود العقد الذكي المراد تحليله قسرياً:</label>
           <textarea
             value={contractText}
@@ -80,21 +97,32 @@ export default function HomePage() {
           />
 
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button onClick={handleAudit} disabled={isLoading} style={{ flex: 1, padding: '14px', backgroundColor: isLoading ? '#94a3b8' : '#2563eb', color: '#ffffff', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '700', cursor: isLoading ? 'not-allowed' : 'pointer', boxShadow: '0 4px 6px -1px rgba(37,99,235,0.2)', transition: 'all 0.2s' }}>
+            <button onClick={handleAudit} disabled={isLoading} style={{ flex: 1, padding: '14px', backgroundColor: isLoading ? '#94a3b8' : '#2563eb', color: '#ffffff', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '700', cursor: isLoading ? 'not-allowed' : 'pointer', boxShadow: '0 4px 6px -1px rgba(37,99,235,0.2)' }}>
               {isLoading ? '⏳ جاري تشغيل المحركات والمحاكاة...' : '🔍 ابدأ التدقيق الأمني الفوري'}
             </button>
-            <button onClick={() => { setContractText(''); setVulns([]); setHasSearched(false); }} style={{ padding: '14px 25px', backgroundColor: '#ef4444', color: '#ffffff', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(239,68,68,0.2)' }}>🗑️ مسح</button>
+            <button onClick={() => { setContractText(''); setVulns([]); setHasSearched(false); }} style={{ padding: '14px 25px', backgroundColor: '#ef4444', color: '#ffffff', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '700', cursor: 'pointer' }}>🗑️ مسح</button>
           </div>
         </div>
 
-        {/* لوحة الإحصائيات العدادية المتقدمة */}
+        {/* لوحة نتائج التدقيق الرقمية */}
         {hasSearched && (
-          <div style={{ marginTop: '30px' }}>
-            <h2 style={{ fontSize: '22px', color: '#0f172a', marginBottom: '18px', fontWeight: '800' }}>📊 لوحة نتائج التدقيق الرقمية:</h2>
+          <div style={{ marginTop: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
+              <h2 style={{ fontSize: '22px', color: '#0f172a', margin: 0, fontWeight: '800', flex: 1 }}>📊 لوحة نتائج التدقيق الرقمية:</h2>
+              
+              {/* زر تحميل تقرير PDF مخصص واحترافي */}
+              <button 
+                onClick={handleDownloadPDF}
+                className="no-print"
+                style={{ padding: '10px 18px', backgroundColor: '#10b981', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(16,185,129,0.2)' }}
+              >
+                📥 تحميل تقرير فحص PDF
+              </button>
+            </div>
             
             {/* شبكة العدادات ومؤشر الأمان */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '15px', marginBottom: '25px' }}>
-              <div style={{ backgroundColor: '#ffffff', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+              <div style={{ backgroundColor: '#ffffff', padding: '15px', borderRadius: '12px', textAlign: 'center', border: '1px solid #e2e8f0' }}>
                 <span style={{ fontSize: '13px', color: '#64748b', fontWeight: '600', display: 'block' }}>🛡️ معدل أمان العقد</span>
                 <span style={{ fontSize: '26px', fontWeight: '800', color: score > 70 ? '#166534' : score > 40 ? '#854d0e' : '#991b1b' }}>{score}%</span>
               </div>
@@ -113,13 +141,13 @@ export default function HomePage() {
             </div>
 
             {vulns.length === 0 ? (
-              <div style={{ backgroundColor: '#f0fdf4', border: '2px solid #22c55e', padding: '25px', borderRadius: '14px', color: '#166534', boxShadow: '0 4px 10px rgba(34,197,94,0.1)' }}>
+              <div style={{ backgroundColor: '#f0fdf4', border: '2px solid #22c55e', padding: '25px', borderRadius: '14px', color: '#166534' }}>
                 <h3 style={{ marginTop: 0, fontSize: '18px', fontWeight: '700' }}>✅ العقد ذو بنية آمنة ومثالية!</h3>
                 <p style={{ margin: 0, fontSize: '15px' }}>لم يتم العثور على أي ثغرات برمجية قياسية أو نقاط ضعف معروفة داخل الأسطر البرمجية المفحوصة.</p>
               </div>
             ) : (
               vulns.map((v, index) => (
-                <div key={index} style={{ ...getSeverityStyle(v.severity), padding: '22px', borderRadius: '14px', marginBottom: '15px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+                <div key={index} style={{ ...getSeverityStyle(v.severity), padding: '22px', borderRadius: '14px', marginBottom: '15px', pageBreakInside: 'avoid' }}>
                   <h3 style={{ marginTop: 0, fontSize: '18px', fontWeight: '700' }}>{v.title}</h3>
                   <p style={{ fontSize: '15px', lineHeight: '1.7', margin: '10px 0' }}>{v.description}</p>
                   <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px dashed rgba(0,0,0,0.05)', fontSize: '15px', fontWeight: '600' }}>{v.solution}</div>

@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'navigation' as any; // جلب أداة التوجيه التلقائي من Next.js
 
 export default function HomePage() {
+  const router = useRouter();
   const [contractText, setContractText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [vulnerabilities, setVulnerabilities] = useState<any[]>([]);
@@ -14,6 +16,18 @@ export default function HomePage() {
   const [userBalance, setUserBalance] = useState(150.00); 
   const [adminEarnings, setAdminEarnings] = useState(0.00); 
   const [lastOpCost, setLastOpCost] = useState(0);
+
+  // 🔐 حماية الصفحة: التوجيه التلقائي لصفحة تسجيل الدخول إذا لم يكن هناك جلسة نشطة
+  useEffect(() => {
+    // محاكاة التحقق من تسجيل الدخول (سيتم ربطها بـ Session حقيقي لاحقاً)
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn !== "true") {
+      // إذا لم يسجل دخوله، انقله تلقائياً لصفحة الدخول
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+    }
+  }, []);
 
   const criticalCount = vulnerabilities.filter(v => v.severity === 'CRITICAL').length;
   const highCount = vulnerabilities.filter(v => v.severity === 'HIGH').length;
@@ -70,22 +84,23 @@ export default function HomePage() {
     window.print();
   };
 
+  // دالة الخروج من الحساب
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    window.location.href = "/login";
+  };
+
   return (
     <main style={{ maxWidth: '900px', margin: '0 auto', padding: '30px', direction: 'rtl', fontFamily: 'system-ui, sans-serif' }}>
       
-      <div style={{ display: 'flex', gap: '15px', marginBottom: '25px' }}>
-        <div>
-          <span>رصيد العميل الافتراضي: </span>
-          <strong>\${userBalance.toFixed(2)}</strong>
+      {/* شريط الإحصائيات العلوي وزر تسجيل الخروج */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', backgroundColor: '#f1f5f9', padding: '10px 20px', borderRadius: '8px' }}>
+        <div style={{ display: 'flex', gap: '15px' }}>
+          <div>رصيد العميل الافتراضي: <strong>\${userBalance.toFixed(2)}</strong></div>
+          <div>تسعيرة الفحص: <strong style={{ color: 'red' }}>\${auditPrice.toFixed(2)}</strong></div>
+          <div>أرباحك المحققة كمالك: <strong style={{ color: 'green' }}>\${adminEarnings.toFixed(2)}</strong></div>
         </div>
-        <div>
-          <span>تسعيرة الفحص: </span>
-          <strong style={{ color: 'red' }}>\${auditPrice.toFixed(2)}</strong>
-        </div>
-        <div>
-          <span>أرباحك المحققة كمالك: </span>
-          <strong style={{ color: 'green' }}>\${adminEarnings.toFixed(2)}</strong>
-        </div>
+        <button onClick={handleLogout} style={{ padding: '6px 12px', backgroundColor: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}>🚪 خروج</button>
       </div>
 
       <header style={{ padding: '20px 0', borderBottom: '1px solid #ccc', marginBottom: '25px' }}>

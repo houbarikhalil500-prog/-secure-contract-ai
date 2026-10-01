@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'navigation' as any; // جلب أداة التوجيه التلقائي من Next.js
 
 export default function HomePage() {
-  const router = useRouter();
   const [contractText, setContractText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [vulnerabilities, setVulnerabilities] = useState<any[]>([]);
@@ -17,13 +15,11 @@ export default function HomePage() {
   const [adminEarnings, setAdminEarnings] = useState(0.00); 
   const [lastOpCost, setLastOpCost] = useState(0);
 
-  // 🔐 حماية الصفحة: التوجيه التلقائي لصفحة تسجيل الدخول إذا لم يكن هناك جلسة نشطة
+  // 🔐 حماية الصفحة: التوجيه التلقائي لصفحة تسجيل الدخول إذا لم تكن هناك جلسة نشطة
   useEffect(() => {
-    // محاكاة التحقق من تسجيل الدخول (سيتم ربطها بـ Session حقيقي لاحقاً)
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
-    if (isLoggedIn !== "true") {
-      // إذا لم يسجل دخوله، انقله تلقائياً لصفحة الدخول
-      if (typeof window !== "undefined") {
+    if (typeof window !== "undefined") {
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      if (isLoggedIn !== "true") {
         window.location.href = "/login";
       }
     }
@@ -34,7 +30,7 @@ export default function HomePage() {
 
   const handleAudit = async () => {
     if (!contractText.trim()) {
-      alert("الرجاء إدخال كود العقد أولاً!");
+      alert("الرجاء إدخل كود العقد أولاً!");
       return;
     }
 

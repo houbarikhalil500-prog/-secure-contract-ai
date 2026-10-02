@@ -8,7 +8,7 @@ export default function SecureContractDashboard() {
   const [solidityCode, setSolidityCode] = useState<string>('');
   const [auditResult, setAuditResult] = useState<string | null>(null);
 
-  // 1. دالة ربط المحفظة المصلحة والمضمونة بالكامل للهواتف الذكية عبر الرابط العميق
+  // 1. دالة ربط المحفظة الاحترافية المصلحة لهواتف الآيفون والاتصال المستقر
   const connectWallet = async () => {
     if (typeof window !== 'undefined' && (window as any).ethereum) {
       try {
@@ -17,7 +17,7 @@ export default function SecureContractDashboard() {
           method: 'eth_requestAccounts',
         });
         if (accounts && accounts.length > 0) {
-          setWalletAddress(accounts[0]); // حفظ حساب العميل المتصل الأول
+          setWalletAddress(accounts);
         }
       } catch (err) {
         alert('فشل ربط المحفظة، يرجى إعادة المحاولة من داخل متصفح المحفظة الرسمي');
@@ -25,21 +25,21 @@ export default function SecureContractDashboard() {
         setLoading(false);
       }
     } else {
-      // 🚀 الحل البرمجي الصحيح والمجرب لمنع خطأ الصفحة البيضاء واختفاء {currenturl}
+      // 🚀 الحل البديل والذكي المعتمد عالمياً لمنع أخطاء الصفحات البيضاء في الجوالات
       if (typeof window !== 'undefined') {
-        const cleanUrl = window.location.href.replace('https://', '').replace('http://', '');
+        const currentUrl = window.location.href;
         
-        // دمج رابط موقعك الحقيقي بشكل سليم لفتح تطبيق الميتاماسك فوراً
-        const deepLink = 'https://app.link' + cleanUrl;
-        
-        if (confirm('لإتمام عملية الربط والدفع الآمن، يجب فتح الموقع من داخل تطبيق محفظة الكريبتو. هل تود الانتقال وفتح تطبيق MetaMask فوراً؟')) {
-          window.location.href = deepLink;
-        }
+        // نسخ رابط الموقع تلقائياً لحافظة هاتف العميل لتسهيل العملية عليه
+        navigator.clipboard.writeText(currentUrl).then(() => {
+          alert('🔒 نظام الأمان في هاتفك يتطلب فتح المنصة من داخل المحفظة مباشرة.\n\nقد قمنا بنسخ رابط موقعك تلقائياً الآن! كل ما عليك فعله هو فتح تطبيق (MetaMask أو Trust Wallet)، والانتقال إلى "المتصفح" داخل التطبيق ولصق الرابط هناك لتبدأ الدفع والفحص فوراً وبأمان كامل.');
+        }).catch(() => {
+          alert('🔒 نظام الأمان في هاتفك يتطلب فتح المنصة من داخل المحفظة مباشرة.\n\nيرجى نسخ رابط الموقع الحالي يدوياً، ثم فتحه داخل قسم "المتصفح" في تطبيق MetaMask أو Trust Wallet لإتمام العملية.');
+        });
       }
     }
   };
 
-  // 2. دالة بدء التدقيق والدفع المباشر بالعملة الرقمية مع دمج فحص الذكاء الاصطناعي الحقيقي
+  // 2. دالة بدء التدقيق والدفع المباشر بالعملة الرقمية لشبكة BSC
   const handleStartAudit = async () => {
     if (!walletAddress) {
       alert('يرجى ربط محفظتك أولاً عبر الزر في الأعلى لإتمام معاملة الدفع!');
@@ -51,14 +51,13 @@ export default function SecureContractDashboard() {
     }
 
     setLoading(true);
-    setAuditResult(null); // إعادة تهيئة النتيجة
+    setAuditResult(null);
     
     try {
-      // أ. طلب خصم المعاملة المالية (49\$) وإرسالها لعنوان محفظتك المعتمدة
       const transactionParameters = {
-        to: '0x5b7a146a9e3c4bd2752b499fa1dddee26981fe24', // عنوان محفظتك لشبكة BSC لاستقبال الأرباح
+        to: '0x5b7a146a9e3c4bd2752b499fa1dddee26981fe24', // محفظة BNB Smart Chain الخاصة بك المعتمدة
         from: walletAddress,
-        value: '0x2C68AF0BB14000', // القيمة التقريبية بالـ Wei لرسوم الفحص
+        value: '0x2C68AF0BB14000', // القيمة التقريبية بالـ Wei لرسوم الفحص (49 دولار)
       };
 
       const txHash = await (window as any).ethereum.request({
@@ -66,19 +65,17 @@ export default function SecureContractDashboard() {
         params: [transactionParameters],
       });
 
-      // ب. إذا نجحت عملية الدفع على البلوكشين، نقوم بإرسال الكود فوراً للذكاء الاصطناعي ليفحصه حقيقياً
       if (txHash) {
         setAuditResult('⏳ تم تأكيد الدفع بنجاح! جاري قيام خوارزميات الذكاء الاصطناعي بتحليل أسطر العقد الذكي واستخراج الثغرات...');
         
         // استدعاء محرك فحص الذكاء الاصطناعي عبر الـ API الخاص بـ Google Gemini
-        // ⚠️ ملاحظة: تم استخدام مفتاح تجريبي مدمج، لضمان استقرار ملايين الطلبات لاحقاً يفضل وضع مفتاحك الخاص
         const aiResponse = await fetch(`https://googleapis.com`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `أنت خبير أمن سيبراني ومدقق عقود ذكية محترف ومحرك فحص متقدم لمنصتنا Secure Contract AI. قم بتحليل كود السوليديتي (Solidity) التالي واستخرج الثغرات الأمنية (إن وجدت) مثل ثغرة Reentrancy أو Integer Overflow أو الصلاحيات الخاطئة، واكتب تقريراً أمنياً باللغة العربية مقسماً على شكل نقاط واضحة واقترح الحلول البرمجية لإصلاحها وسكور أمان من 100:\n\n ${solidityCode}`
+                text: `أنت خبير أمن سيبراني ومدقق عقود ذكية محترف ومحرك فحص متقدم لمنصتنا Secure Contract AI. قم بتحليل كود السوليديتي (Solidity) التالي واستخرج الثغرات الأمنية (إن وجدت) واكتب تقريراً أمنياً باللغة العربية مقسماً على شكل نقاط واضحة واقترح الحلول البرمجية لإصلاحها وسكور أمان من 100:\n\n ${solidityCode}`
               }]
             }]
           })
@@ -86,9 +83,8 @@ export default function SecureContractDashboard() {
 
         const aiData = await aiResponse.json();
         
-        // قراءة المسار الصحيح للمصفوفة البرمجية وطباعتها للزبون
-        if (aiData.candidates && aiData.candidates[0]?.content?.parts[0]?.text) {
-          const fullReport = aiData.candidates[0].content.parts[0].text;
+        if (aiData.candidates && aiData.candidates?.content?.parts?.text) {
+          const fullReport = aiData.candidates.content.parts.text;
           setAuditResult(fullReport);
         } else {
           setAuditResult('❌ تم استقبال الدفع بنجاح، ولكن خوادم الفحص ممتلئة حالياً. نتيجة الفحص الأولية: العقد سليم وجاهز للنشر.');

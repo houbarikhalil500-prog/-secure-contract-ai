@@ -8,6 +8,9 @@ export default function SecureContractDashboard() {
   const [solidityCode, setSolidityCode] = useState<string>('');
   const [auditResult, setAuditResult] = useState<string | null>(null);
 
+  // السعر بالدولار الأمريكي
+  const AUDIT_FEE_USD = 149.00; 
+
   const connectWallet = async () => {
     if (typeof window !== 'undefined' && (window as any).ethereum) {
       try {
@@ -19,25 +22,18 @@ export default function SecureContractDashboard() {
           setWalletAddress(accounts[0]);
         }
       } catch (err) {
-        alert('Wallet connection failed. Please try again inside your crypto wallet browser.');
+        alert('Wallet connection failed. Please try again.');
       } finally {
         setLoading(false);
       }
     } else {
-      if (typeof window !== 'undefined') {
-        const currentUrl = window.location.href;
-        navigator.clipboard.writeText(currentUrl).then(() => {
-          alert('🔒 Security Notice:\n\nPlease open this dApp inside your Crypto Wallet browser (MetaMask / Trust Wallet). Link copied to clipboard! Just paste it in your wallet browser search bar.');
-        }).catch(() => {
-          alert('🔒 Security Notice:\n\nPlease copy this website link and open it inside your Crypto Wallet browser to connect safely.');
-        });
-      }
+      alert('Please install MetaMask or Trust Wallet to connect.');
     }
   };
 
   const handleStartAudit = async () => {
     if (!walletAddress) {
-      alert('Please connect your Web3 wallet first using the button at the top!');
+      alert('Please connect your Web3 wallet first!');
       return;
     }
     if (!solidityCode.trim()) {
@@ -49,42 +45,44 @@ export default function SecureContractDashboard() {
     setAuditResult(null);
     
     try {
+      // 1. حساب قيمة الدفع الفعلية
+      // ملاحظة: لتحويل الـ USD إلى قيمة ETH دقيقة برمجياً، يُفضل استخدام Price Feed (مثل Chainlink Data Feeds) 
+      // أو حسابها من خادمك الخاص (Backend). القيمة أدناه تقريبية للتوضيح (مثلاً 0.04 ETH).
+      const ethAmountInWei = '0x8e1bc9bf040000'; // ما يعادل تقريباً قيمة الـ 149$ بالـ ETH حالياً
+
       const transactionParameters = {
-        to: '0x5b7a146a9e3c4bd2752b499fa1dddee26981fe24',
+        to: '0x5b7a146a9e3c4bd2752b499fa1dddee26981fe24', // عنوان محفظة استقبال أرباح موقعك
         from: walletAddress,
-        value: '0x08b2633010c0000',
+        value: ethAmountInWei, // القيمة الفعلية الصحيحة
       };
 
+      // طلب إرسال المعاملة الحقيقية من محفظة العميل
       const txHash = await (window as any).ethereum.request({
         method: 'eth_sendTransaction',
         params: [transactionParameters],
       });
 
       if (txHash) {
-        setAuditResult('⏳ Payment confirmed! Our cyber security AI algorithms are now analyzing the Solidity code lines and extracting vulnerabilities...');
-        
-        const aiResponse = await fetch(`https://googleapis.com`, {
+        setAuditResult('⏳ Payment confirmed! Analyzing your smart contract for vulnerabilities...');
+
+        // 2. استدعاء خادمك الخاص (Backend API) بشكل آمن لاستدعاء الذكاء الاصطناعي
+        // لا تقم باستدعاء الـ API الخاص بـ Google أو OpenAI من الـ Frontend مباشرة لحماية مفاتيحك السرية (API Keys)
+        const response = await fetch('/api/audit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `You are an elite cyber security expert and smart contract auditor for Secure Contract AI. Analyze the following Solidity code, find security vulnerabilities (like Reentrancy, Overflow, access controls, etc.), write a highly professional security audit report in English, structure it clearly with bullet points, suggest the secure code fixes, and give a final security score out of 100:\n\n ${solidityCode}`
-              }]
-            }]
-          })
+          body: JSON.stringify({ code: solidityCode, txHash: txHash })
         });
 
-        const aiData = await aiResponse.json();
+        const data = await response.json();
         
-        if (aiData.candidates && aiData.candidates[0]?.content?.parts[0]?.text) {
-          setAuditResult(aiData.candidates[0].content.parts[0].text);
+        if (data.success && data.report) {
+          setAuditResult(data.report);
         } else {
-          setAuditResult('❌ Payment received successfully, but audit servers are busy. Preliminary check: Contract logic is solid and ready for deployment without major critical issues.');
+          setAuditResult('❌ Audit failed. Please contact support with your Transaction Hash.');
         }
       }
     } catch (err) {
-      alert('Transaction canceled or an error occurred while connecting to the AI engine.');
+      alert('Transaction canceled or an error occurred.');
     } finally {
       setLoading(false);
     }
@@ -96,8 +94,9 @@ export default function SecureContractDashboard() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', color: '#111827', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px', fontFamily: 'sans-serif', direction: 'ltr', boxSizing: 'border-box' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', color: '#111827', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px', fontFamily: 'sans-serif', boxSizing: 'border-box' }}>
       
+      {/* شريط الاتصال العلوي */}
       <div style={{ width: '100%', maxWidth: '896px', backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '16px', padding: '16px', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', flexWrap: 'wrap', boxSizing: 'border-box' }}>
         <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
           <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: '500' }}>Network Connection</span>
@@ -114,18 +113,19 @@ export default function SecureContractDashboard() {
         
         <div style={{ textAlign: 'center' }}>
           <span style={{ fontSize: '11px', color: '#6b7280', display: 'block' }}>Audit Fee</span>
-          <span style={{ fontSize: '18px', fontWeight: '800', color: '#2563eb', fontFamily: 'monospace', marginTop: '2px', display: 'block' }}>\$149.00</span>
+          <span style={{ fontSize: '18px', fontWeight: '800', color: '#2563eb', fontFamily: 'monospace', marginTop: '2px', display: 'block' }}>${AUDIT_FEE_USD.toFixed(2)}</span>
         </div>
 
         <button 
           onClick={connectWallet}
           disabled={loading}
-          style={{ fontWeight: 'bold', padding: '12px 24px', borderRadius: '12px', fontSize: '12px', cursor: 'pointer', transition: 'all 0.3s', border: 'none', color: '#ffffff', background: walletAddress ? 'linear-gradient(to right, #10b981, #059669)' : 'linear-gradient(to right, #f59e0b, #ea580c)' }}
+          style={{ fontWeight: 'bold', padding: '12px 24px', borderRadius: '12px', fontSize: '12px', cursor: 'pointer', transition: 'all 0.3s', border: 'none', color: '#ffffff', background: walletAddress ? 'linear-gradient(to right, #10b981, #059669)' : 'linear-gradient(to right, #2563eb, #1d4ed8)' }}
         >
           {walletAddress ? '✓ Wallet Connected' : '🌐 Connect Wallet'}
         </button>
       </div>
 
+      {/* عنوان الصفحة ووصف الخدمة */}
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '12px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '16px', marginBottom: '16px' }}>
           <span style={{ fontSize: '24px' }}>🛡️</span>
@@ -138,6 +138,7 @@ export default function SecureContractDashboard() {
         </p>
       </div>
 
+      {/* صندوق إدخال الكود والنتائج */}
       <div style={{ width: '100%', maxWidth: '896px', backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '24px', padding: '24px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', gap: '24px', boxSizing: 'border-box' }}>
         
         <div>
@@ -152,7 +153,7 @@ export default function SecureContractDashboard() {
             value={solidityCode}
             onChange={(e) => setSolidityCode(e.target.value)}
             placeholder="// Paste your Solidity code here..."
-            style={{ width: '100%', height: '288px', padding: '16px', borderRadius: '16px', border: '1px solid #d1d5db', backgroundColor: '#f9fafb', fontFamily: 'monospace', fontSize: '12px', color: '#1f2937', textAlign: 'left', outline: 'none', resize: 'none', direction: 'ltr', boxSizing: 'border-box' }}
+            style={{ width: '100%', height: '288px', padding: '16px', borderRadius: '16px', border: '1px solid #d1d5db', backgroundColor: '#f9fafb', fontFamily: 'monospace', fontSize: '12px', color: '#1f2937', textAlign: 'left', outline: 'none', resize: 'none', boxSizing: 'border-box' }}
           />
         </div>
 
@@ -160,32 +161,29 @@ export default function SecureContractDashboard() {
           <button 
             onClick={handleStartAudit}
             disabled={loading}
-            style={{ flex: '1', background: 'linear-gradient(to right, #2563eb, #3b82f6)', color: '#ffffff', fontWeight: 'bold', padding: '16px', borderRadius: '16px', fontSize: '15px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(37,99,235,0.5)' }}
+            style={{ flex: 2, padding: '14px', borderRadius: '12px', fontWeight: 'bold', border: 'none', cursor: 'pointer', color: '#ffffff', backgroundColor: '#2563eb', transition: 'background-color 0.2s' }}
           >
-            {loading ? 'Processing Crypto Wallet Transaction...' : 'Start Audit & Pay Securely (\$149)'}
+            {loading ? 'Processing...' : '🔒 Pay & Start AI Audit'}
           </button>
           
           <button 
             onClick={handleClear}
-            style={{ backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb', color: '#374151', fontWeight: '500', padding: '0 20px', borderRadius: '16px', fontSize: '13px', cursor: 'pointer' }}
+            style={{ flex: 1, padding: '14px', borderRadius: '12px', fontWeight: 'bold', border: '1px solid #d1d5db', cursor: 'pointer', color: '#4b5563', backgroundColor: '#ffffff' }}
           >
             Clear
           </button>
         </div>
 
+        {/* عرض نتيجة الفحص للعميل */}
         {auditResult && (
-          <div style={{ width: '100%', padding: '20px', borderRadius: '16px', border: '1px solid #bfdbfe', backgroundColor: '#eff6ff', textAlign: 'left', whiteSpace: 'pre-wrap', fontFamily: 'sans-serif', fontSize: '13px', color: '#1e3a8a', lineHeight: '1.6', borderTop: '4px solid #2563eb', boxSizing: 'border-box' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#2563eb', fontWeight: 'bold', borderBottom: '1px solid #bfdbfe', paddingBottom: '8px', marginBottom: '12px' }}>
-              <span>📋</span> Advanced AI Security Audit Report
-            </div>
-            {auditResult}
+          <div style={{ marginTop: '16px', padding: '20px', borderRadius: '16px', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 'bold', marginBottom: '12px', color: '#1f2937' }}>Audit Report Output:</h3>
+            <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '13px', color: '#374151', lineHeight: '1.5' }}>{auditResult}</pre>
           </div>
         )}
-      </div>
 
-      <div style={{ marginTop: '48px', fontSize: '10px', color: '#9ca3af', fontFamily: 'monospace', letterSpacing: '0.1em' }}>
-        SECURE CONTRACT AI © 2026 • WEB3 SECURITY ENGINE
       </div>
     </div>
   );
 }
+      

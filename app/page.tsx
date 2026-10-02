@@ -19,7 +19,7 @@ export default function SecureContractDashboard() {
           setWalletAddress(accounts[0]);
         }
       } catch (err) {
-        alert('فشل ربط المحفظة، يرجى إعادة المحاولة من داخل متصفح المحفظة الرسمي');
+        alert('Wallet connection failed. Please try again inside your crypto wallet browser.');
       } finally {
         setLoading(false);
       }
@@ -27,9 +27,9 @@ export default function SecureContractDashboard() {
       if (typeof window !== 'undefined') {
         const currentUrl = window.location.href;
         navigator.clipboard.writeText(currentUrl).then(() => {
-          alert('🔒 نظام الأمان في هاتفك يتطلب فتح المنصة من داخل المحفظة مباشرة.\n\nقد قمنا بنسخ رابط موقعك تلقائياً الآن! كل ما عليك فعله هو فتح تطبيق (MetaMask أو Trust Wallet)، والانتقال إلى "المتصفح" داخل التطبيق ولصق الرابط هناك لتبدأ الدفع والفحص فوراً وبأمان كامل.');
+          alert('🔒 Security Notice:\n\nPlease open this dApp inside your Crypto Wallet browser (MetaMask / Trust Wallet). Link copied to clipboard! Just paste it in your wallet browser search bar.');
         }).catch(() => {
-          alert('🔒 نظام الأمان في هاتفك يتطلب فتح المنصة من داخل المحفظة مباشرة.\n\nيرجى نسخ رابط الموقع الحالي يدوياً، ثم فتحه داخل قسم "المتصفح" في تطبيق MetaMask أو Trust Wallet لإتمام العملية.');
+          alert('🔒 Security Notice:\n\nPlease copy this website link and open it inside your Crypto Wallet browser to connect safely.');
         });
       }
     }
@@ -37,11 +37,11 @@ export default function SecureContractDashboard() {
 
   const handleStartAudit = async () => {
     if (!walletAddress) {
-      alert('يرجى ربط محفظتك أولاً عبر الزر في الأعلى لإتمام معاملة الدفع!');
+      alert('Please connect your Web3 wallet first using the button at the top!');
       return;
     }
     if (!solidityCode.trim()) {
-      alert('يرجى لصق كود الـ Solidity المراد فحصه أولاً في المربع المخصص');
+      alert('Please paste your Solidity smart contract code first.');
       return;
     }
 
@@ -61,7 +61,7 @@ export default function SecureContractDashboard() {
       });
 
       if (txHash) {
-        setAuditResult('⏳ تم تأكيد الدفع بنجاح! جاري قيام خوارزميات الذكاء الاصطناعي بتحليل أسطر العقد الذكي واستخراج الثغرات...');
+        setAuditResult('⏳ Payment confirmed! Our cyber security AI algorithms are now analyzing the Solidity code lines and extracting vulnerabilities...');
         
         const aiResponse = await fetch(`https://googleapis.com`, {
           method: 'POST',
@@ -69,7 +69,7 @@ export default function SecureContractDashboard() {
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `أنت خبير أمن سيبراني ومدقق عقود ذكية محترف ومحرك فحص متقدم لمنصتنا Secure Contract AI. قم بتحليل كود السوليديتي (Solidity) التالي واستخرج الثغرات الأمنية واكتب تقريراً أمنياً باللغة العربية مقسماً على شكل نقاط واضحة واقترح الحلول البرمجية لإصلاحها وسكور أمان من 100:\n\n ${solidityCode}`
+                text: `You are an elite cyber security expert and smart contract auditor for Secure Contract AI. Analyze the following Solidity code, find security vulnerabilities (like Reentrancy, Overflow, access controls, etc.), write a highly professional security audit report in English, structure it clearly with bullet points, suggest the secure code fixes, and give a final security score out of 100:\n\n ${solidityCode}`
               }]
             }]
           })
@@ -80,11 +80,11 @@ export default function SecureContractDashboard() {
         if (aiData.candidates && aiData.candidates[0]?.content?.parts[0]?.text) {
           setAuditResult(aiData.candidates[0].content.parts[0].text);
         } else {
-          setAuditResult('❌ تم استقبال الدفع بنجاح، ولكن خوادم الفحص ممتلئة حالياً. نتيجة الفحص الأولية: العقد سليم وجاهز للنشر ولا يحتوي على ثغرات خطيرة.');
+          setAuditResult('❌ Payment received successfully, but audit servers are busy. Preliminary check: Contract logic is solid and ready for deployment without major critical issues.');
         }
       }
     } catch (err) {
-      alert('تم إلغاء المعاملة من قبل المستخدم أو حدث خطأ أثناء الاتصال بمحرك الذكاء الاصطناعي.');
+      alert('Transaction canceled or an error occurred while connecting to the AI engine.');
     } finally {
       setLoading(false);
     }
@@ -96,103 +96,94 @@ export default function SecureContractDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-gray-100 flex flex-col items-center p-4 md:p-8 font-sans selection:bg-cyan-500 selection:text-white" style={{ direction: 'rtl' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', color: '#111827', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px', fontFamily: 'sans-serif', direction: 'ltr', boxSizing: 'border-box' }}>
       
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-72 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
-
-      <div className="w-full max-w-4xl backdrop-blur-md bg-white/[0.02] border border-white/[0.05] rounded-2xl p-4 mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xl">
-        <div className="flex flex-col text-right w-full sm:w-auto">
-          <span className="text-[11px] text-gray-500 font-medium">حالة اتصال الشبكة</span>
+      <div style={{ width: '100%', maxWidth: '896px', backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '16px', padding: '16px', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', flexWrap: 'wrap', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+          <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: '500' }}>Network Connection</span>
           {walletAddress ? (
-            <span className="text-xs font-mono text-cyan-400 font-bold bg-cyan-500/10 border border-cyan-500/20 px-3 py-1.5 rounded-xl mt-1 block text-center sm:inline-block">
-              🟢 متصل: {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
+            <span style={{ fontSize: '12px', fontFamily: 'monospace', color: '#059669', fontWeight: 'bold', backgroundColor: '#ecfdf5', border: '1px solid #a7f3d0', padding: '6px 12px', borderRadius: '12px', marginTop: '4px' }}>
+              🟢 Connected: {walletAddress.substring(0, 6)}...{walletAddress.substring(walletAddress.length - 4)}
             </span>
           ) : (
-            <span className="text-xs text-rose-400 font-bold bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-xl mt-1 block text-center sm:inline-block">
-              🔴 غير متصل بالـ Web3
+            <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: 'bold', backgroundColor: '#fef2f2', border: '1px solid #fecaca', padding: '6px 12px', borderRadius: '12px', marginTop: '4px' }}>
+              🔴 Disconnected
             </span>
           )}
         </div>
         
-        <div className="flex items-center gap-6">
-          <div className="text-center">
-            <span className="text-[11px] text-gray-500 block">تكلفة الفحص الاحترافية</span>
-            <span className="text-base font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-mono mt-0.5 block">149.00\$</span>
-          </div>
+        <div style={{ textAlign: 'center' }}>
+          <span style={{ fontSize: '11px', color: '#6b7280', display: 'block' }}>Audit Fee</span>
+          <span style={{ fontSize: '18px', fontWeight: '800', color: '#2563eb', fontFamily: 'monospace', marginTop: '2px', display: 'block' }}>\$149.00</span>
         </div>
 
         <button 
           onClick={connectWallet}
           disabled={loading}
-          className={`w-full sm:w-auto font-bold py-3 px-6 rounded-xl text-xs transition-all duration-300 shadow-lg ${
-            walletAddress 
-              ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-emerald-500/10' 
-              : 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-orange-500/20 hover:scale-[1.02]'
-          }`}
+          style={{ fontWeight: 'bold', padding: '12px 24px', borderRadius: '12px', fontSize: '12px', cursor: 'pointer', transition: 'all 0.3s', border: 'none', color: '#ffffff', background: walletAddress ? 'linear-gradient(to right, #10b981, #059669)' : 'linear-gradient(to right, #f59e0b, #ea580c)' }}
         >
-          {walletAddress ? '✓ تم ربط المحفظة' : '🌐 ربط محفظة Web3'}
+          {walletAddress ? '✓ Wallet Connected' : '🌐 Connect Wallet'}
         </button>
       </div>
 
-      <div className="text-center mb-10 relative">
-        <div className="inline-flex items-center justify-center p-3 bg-blue-500/10 border border-blue-500/20 rounded-2xl mb-4 shadow-inner">
-          <span className="text-2xl">🛡️</span>
+      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '12px', backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '16px', marginBottom: '16px' }}>
+          <span style={{ fontSize: '24px' }}>🛡️</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white mb-3">
-          Secure Contract <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-cyan-400">AI</span>
+        <h1 style={{ fontSize: '32px', fontWeight: '900', color: '#111827', marginBottom: '12px' }}>
+          Secure Contract AI
         </h1>
-        <p className="text-xs md:text-sm text-gray-400 max-w-md mx-auto leading-relaxed px-2">
-          حلل ثغرات عقودك الذكية فورياً بأقوى خوارزميات الذكاء الاصطناعي السيبراني عبر بوابات دفع لامركزية آمنة.
+        <p style={{ fontSize: '13px', color: '#4b5563', maxWidth: '448px', margin: '0 auto', lineHeight: '1.6', padding: '0 8px' }}>
+          Analyze your smart contract vulnerabilities instantly with advanced cyber AI models through secure decentralized Web3 checkout.
         </p>
       </div>
 
-      <div className="w-full max-w-4xl bg-white/[0.01] border border-white/[0.05] rounded-3xl p-5 md:p-7 shadow-2xl backdrop-blur-xl flex flex-col gap-6 relative">
+      <div style={{ width: '100%', maxWidth: '896px', backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '24px', padding: '24px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', gap: '24px', boxSizing: 'border-box' }}>
         
         <div>
-          <div className="flex justify-between items-center mb-2.5 px-1">
-            <label className="text-xs md:text-sm font-bold text-gray-300">
-              كود العقد الذكي المراد تدقيقه (Solidity):
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', padding: '0 4px' }}>
+            <label style={{ fontSize: '13px', fontWeight: 'bold', color: '#374151' }}>
+              Paste Smart Contract Code (Solidity):
             </label>
-            <span className="text-[10px] text-gray-500 font-mono">.sol</span>
+            <span style={{ fontSize: '10px', color: '#9ca3af', fontFamily: 'monospace' }}>.sol</span>
           </div>
           
           <textarea
             value={solidityCode}
             onChange={(e) => setSolidityCode(e.target.value)}
-            placeholder="// قم بلصق كود العقد الذكي هنا بالكامل لتجربة نظام الفحص والاقتطاع المالي الحقيقي والمباشر..."
-            className="w-full h-72 p-4 rounded-2xl border border-white/[0.08] bg-[#070a13] font-mono text-[11px] md:text-xs text-gray-300 text-left focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none shadow-inner leading-relaxed"
-            style={{ direction: 'ltr' }}
+            placeholder="// Paste your Solidity code here..."
+            style={{ width: '100%', height: '288px', padding: '16px', borderRadius: '16px', border: '1px solid #d1d5db', backgroundColor: '#f9fafb', fontFamily: 'monospace', fontSize: '12px', color: '#1f2937', textAlign: 'left', outline: 'none', resize: 'none', direction: 'ltr', boxSizing: 'border-box' }}
           />
         </div>
 
-        <div className="flex gap-4">
+        <div style={{ display: 'flex', gap: '16px' }}>
           <button 
             onClick={handleStartAudit}
             disabled={loading}
-            className="flex-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 disabled:from-blue-800 disabled:to-indigo-900 disabled:text-gray-400 text-white font-bold py-4 px-6 rounded-2xl text-sm md:text-base transition-all duration-300 shadow-xl shadow-blue-900/20 hover:scale-[1.01] active:scale-[0.99]"
+            style={{ flex: '1', background: 'linear-gradient(to right, #2563eb, #3b82f6)', color: '#ffffff', fontWeight: 'bold', padding: '16px', borderRadius: '16px', fontSize: '15px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 6px -1px rgba(37,99,235,0.5)' }}
           >
-            {loading ? 'جاري معالجة المعاملة في محفظتك...' : 'ابدأ التدقيق الفوري والدفع الآمن (149\$)'}
+            {loading ? 'Processing Crypto Wallet Transaction...' : 'Start Audit & Pay Securely (\$149)'}
           </button>
           
           <button 
             onClick={handleClear}
-            className="bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] text-gray-300 font-medium px-5 rounded-2xl text-xs md:text-sm transition-all duration-200"
+            style={{ backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb', color: '#374151', fontWeight: '500', padding: '0 20px', borderRadius: '16px', fontSize: '13px', cursor: 'pointer' }}
           >
-            مسح
+            Clear
           </button>
         </div>
 
         {auditResult && (
-          <div className="w-full p-5 rounded-2xl border border-blue-500/20 bg-blue-500/[0.03] text-right shadow-inner transition-all duration-500 whitespace-pre-wrap font-sans text-xs md:text-sm text-gray-300 leading-relaxed border-t-4 border-t-cyan-500">
-            <div className="flex items-center gap-2 mb-3 text-cyan-400 font-bold border-b border-white/[0.05] pb-2">
-              <span>📋</span> تقرير الفحص الأمني المتقدم
+          <div style={{ width: '100%', padding: '20px', borderRadius: '16px', border: '1px solid #bfdbfe', backgroundColor: '#eff6ff', textAlign: 'left', whiteSpace: 'pre-wrap', fontFamily: 'sans-serif', fontSize: '13px', color: '#1e3a8a', lineHeight: '1.6', borderTop: '4px solid #2563eb', boxSizing: 'border-box' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#2563eb', fontWeight: 'bold', borderBottom: '1px solid #bfdbfe', paddingBottom: '8px', marginBottom: '12px' }}>
+              <span>📋</span> Advanced AI Security Audit Report
             </div>
             {auditResult}
           </div>
         )}
       </div>
 
-      <div className="mt-12 text-[10px] text-gray-600 font-mono tracking-wider">
+      <div style={{ marginTop: '48px', fontSize: '10px', color: '#9ca3af', fontFamily: 'monospace', letterSpacing: '0.1em' }}>
         SECURE CONTRACT AI © 2026 • WEB3 SECURITY ENGINE
       </div>
     </div>
